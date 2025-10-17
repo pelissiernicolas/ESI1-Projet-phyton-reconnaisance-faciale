@@ -1,2 +1,63 @@
 /.venv
 /__pycache__
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Editor/IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python packaging
+pip-wheel-metadata/
+*.egg-info/
+
+# Logs and db
+*.log
+*.sqlite3
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test
+.pytest_cache/
+
+# Secrets
+.env
+.env.*
+
+# Data / generated models
+# Ignore model files, embeddings and temporary captures
+data/encodings/
+data/tmp/
+data/images/
+data/*.db
+data/*.sqlite
+
+# Keep the students CSV under version control by negation
+!data/students.csv
+
+# Optional: ignore any large archives or export files
+*.zip
+*.tar.gz
+*.tgz
+*.jpg
+
+# Misc
+*.bak
+*~
+
+# End of .gitignore
