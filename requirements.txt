@@ -1,4 +1,13 @@
-face_recognition
-opencv-python
-numpy
-Pillow
+opencv-python>=4.6.0
+numpy>=1.24
+Pillow>=9.0
+# face_recognition (dlib-based) - optional, requires dlib/CMake to build
+# face_recognition
+
+# Optional modern embeddings backend (recommended, avoids dlib):
+# insightface depends on onnxruntime and may download models on first run
+# insightface
+# onnxruntime
+
+# Note: if you want the face_recognition pipeline (dlib), ensure CMake and build tools are installed,
+# otherwise prefer installing insightface + onnxruntime and using the embedding backend.
