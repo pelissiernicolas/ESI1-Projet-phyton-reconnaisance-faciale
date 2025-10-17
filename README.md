@@ -95,10 +95,3 @@ Calibre les seuils en testant ta caméra et tes images (variations de lumière, 
 - Pour ajouter des tests unitaires, privilégier `pytest` et ajouter des fixtures minimalistes pour images factices.
 
 ---
-
-Si tu veux, je peux :
-- ajouter un script CLI `scripts/rebuild_embeddings.py` et un bouton UI pour déclencher la reconstruction depuis l'app ;
-- ajouter un slider dans l'onglet Admin pour régler dynamiquement le seuil embeddings ;
-- écrire un petit guide de calibration (série de captures pour mesurer TPR/FPR).
-
-Dis-moi quelle option tu veux que j'implémente ensuite.
