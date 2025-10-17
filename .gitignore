@@ -55,6 +55,8 @@ data/*.sqlite
 *.tar.gz
 *.tgz
 *.jpg
+meta.json
+lbph_model.yml
 
 # Misc
 *.bak

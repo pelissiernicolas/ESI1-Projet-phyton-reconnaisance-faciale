@@ -7,8 +7,7 @@ import cv2
 
 # IMPORTANT : utiliser la version OpenCV-only de face_utils.py
 # (qui expose IMAGES_DIR, add_or_update_image, match_face)
-from face_utils import IMAGES_DIR, add_or_update_image, match_face, detect_and_match_bgr
-from face_utils import IMAGES_DIR, add_or_update_image, match_face, detect_and_match_bgr
+from face_utils import IMAGES_DIR, add_or_update_image, match_face, detect_and_match_bgr, match_face_bgr
 
 
 STUDENTS_CSV = os.path.join("data", "students.csv")
@@ -133,19 +132,41 @@ class AdminCamFrame(ttk.Frame):
             return
 
         # Détection + matching (OpenCV-only)
+        # Détection (LBPH helper fournit bboxes) puis, pour chaque ROI, tenter
+        # un matching embedding via match_face_bgr() si disponible.
         results = detect_and_match_bgr(frame, threshold=self.threshold)
 
         # Dessin des boxes + infos
         for r in results:
             (x, y, w, h) = r["bbox"]
-            color = (0, 180, 0) if r["ok"] else (0, 0, 255)
-            cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-            caption = f"score={r['score']:.1f}"
-            if r["ok"]:
-                who = f"{r.get('prenom') or ''} {r.get('nom') or ''}".strip()
-                sid = r.get("id") or "?"
-                caption = f"{who} (ID {sid})  {caption}"
-            cv2.putText(frame, caption, (x, y-8), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
+            # safer crop
+            h_img, w_img = frame.shape[:2]
+            x0, y0 = max(0, x), max(0, y)
+            x1, y1 = min(w_img, x + w), min(h_img, y + h)
+            roi = frame[y0:y1, x0:x1]
+
+            emb_path, emb_score = match_face_bgr(roi, threshold=0.40)
+
+            # Decide which score to display/use: prefer embedding similarity when present
+            if emb_path is not None and emb_score is not None:
+                ok = True
+                color = (0, 180, 0)
+                caption = f"sim={emb_score:.2f}"
+                # try to extract name from emb_path
+                try:
+                    base = os.path.basename(emb_path)
+                    sid, first, last = os.path.splitext(base)[0].split("_", 2)
+                    caption = f"{first} {last} (ID {sid})  {caption}"
+                except Exception:
+                    pass
+            else:
+                ok = r.get("ok", False)
+                color = (0, 180, 0) if ok else (0, 0, 255)
+                score = r.get("score", 0.0)
+                caption = f"score={score:.1f}"
+
+            cv2.rectangle(frame, (x0, y0), (x1, y1), color, 2)
+            cv2.putText(frame, caption, (x0, y0-8), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2, cv2.LINE_AA)
 
         # Convertir BGR -> RGB -> PhotoImage
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
